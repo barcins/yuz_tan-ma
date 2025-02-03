@@ -1,0 +1,20 @@
+pip install icecream
+sudo apt search python3-icecream
+
+dlib hatası için:
+sudo nano /etc/dphys-swapfile
+Scroll down to the configuration which reads: CONF_SWAPSIZE=100 -> CONF_SWAPSIZE=2048
+
+python -m venv _env
+source _env/bin/activate
+pip install icecream
+pip install face-recognition
+pip install cmake
+pip install wheel
+pip install dlib --verbose
+pip install imutils
+pip install opencv-python
+
+
+
+
