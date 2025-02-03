@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  yuztanima:
+    image: bot-turnuvalar
+    container_name: sisal_yuz_tanima
+    build: .
+    restart: always
+
+
+
+
+
+  
