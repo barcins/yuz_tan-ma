@@ -10,6 +10,15 @@ from train_model import run_train
 from ses_kaydi import ses_kaydi_al
 from ses_to_yazi import ses_to_yazi
 
+
+kimler = os.getcwd() + "dataset/_kimler/"
+print("kimler:", kimler)
+
+workdir = "dataset/_kimler/"
+if not os.access(workdir, os.W_OK):
+	os.mkdir(workdir)	
+
+
 #Initialize 'currentname' to trigger only when a new person is identified.
 currentname = "Unknown"
 #Determine faces from encodings.pickle file model created from train_model.py
@@ -22,7 +31,10 @@ data = pickle.loads(open(encodingsP, "rb").read())
 # Set the ser to the followng
 # src = 0 : for the build in single web cam, could be your laptop webcam
 # src = 2 : I had to set it to 2 inorder to use the USB webcam attached to my laptop
-time.sleep(4.0)
+
+run_train() # yuz bilgilerini haritala
+time.sleep(1.0)
+
 vs = VideoStream(src=0,framerate=10).start()
 #vs = VideoStream(usePiCamera=True).start()
 # start the FPS counter
@@ -97,20 +109,12 @@ while True:
 
 	if sayac > 20 and len(boxes) == 1 and name == "Unknown":
 		#names = []
-
 		file_name = "dataset/_kimler/" + datetime.now().strftime('%Y-%m-%d_%H-%M-%S..jpg' ) 
-		workdir = "dataset/_kimler/"
-		if not os.access(workdir, os.W_OK):
-			os.mkdir(workdir)	
-
-		print("fotoğraf çekildi")
+		print("fotoğraf çekildi:", file_name)
 		mesaj = "Tanımsız Yüz algılandı."
-		cv2.waitKey(2000)
 		cv2.imwrite(file_name,frame)
-
 		run_train()
 		data = pickle.loads(open(encodingsP, "rb").read())
-
 		sayac = 0	
 
 	# loop over the recognized faces

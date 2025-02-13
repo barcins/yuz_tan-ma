@@ -4,6 +4,7 @@ import wave
 from datetime import datetime
 import cv2, time
 
+ses_kaydi = os.getcwd() + "/audio/"
 
 print(pyaudio.PyAudio().get_default_input_device_info())
 for i in range(pyaudio.PyAudio().get_device_count()):
@@ -21,7 +22,7 @@ KAYITTUMA_SN = 120
 
 
 def kaydi_kaydet(frames):
-    WAVE_OUTPUT_FILENAME = "ses_kaydi" + datetime.now().strftime('%Y-%m-%d_%H-%M-%S.wav' ) 
+    WAVE_OUTPUT_FILENAME = ses_kaydi + "ses_kaydi" + datetime.now().strftime('%Y-%m-%d_%H-%M-%S.wav' ) 
     wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
     wf.setnchannels(CHANNELS)
     wf.setsampwidth(p.get_sample_size(FORMAT))
@@ -40,6 +41,8 @@ def ses_kaydi_al():
         if silincek_ses_dosyalari > 0:
             for file in range(silincek_ses_dosyalari ):
                 os.remove(files[file]) # önceki kayıtları sil
+                #print("kontrol # önceki kayıtları sil", files[file])
+
 
         p = pyaudio.PyAudio()
         stream = p.open(format=FORMAT,

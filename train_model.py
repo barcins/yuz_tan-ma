@@ -22,8 +22,7 @@ def run_train():
 	# loop over the image paths
 	for (i, imagePath) in enumerate(imagePaths):
 		# extract the person name from the image path
-		print("[INFO] processing image {}/{}".format(i + 1,
-			len(imagePaths)))
+		#print("[INFO] processing image {}/{}".format(i + 1,	len(imagePaths)))
 		name = imagePath.split(os.path.sep)[-2]
 
 		# load the input image and convert it from RGB (OpenCV ordering)
@@ -53,4 +52,4 @@ def run_train():
 	f.write(pickle.dumps(data))
 	f.close()
 
-run_train()
+#run_train()

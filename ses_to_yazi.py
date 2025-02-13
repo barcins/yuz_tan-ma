@@ -47,6 +47,7 @@ def ses_to_yazi():
         for arr in okunanlar:
             if arr not in files:
                 files.remove(arr)
+                print("kontrol files.remove(arr)", arr)
         for file in files:
             if file not in okunanlar:   
                 playsound(file) # kayıtlı ses dosyasını çal
