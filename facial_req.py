@@ -1,11 +1,14 @@
-#! /usr/bin/python
+# -*- coding: utf-8 -*-
+# #! /usr/bin/python
 # import the necessary packages
-import face_recognition, imutils, pickle, time, cv2, os, numpy as np
+import face_recognition, imutils, pickle, time, cv2, os, numpy as np, threading
 from PIL import Image, ImageDraw, ImageFont
 from matplotlib import font_manager
 from imutils.video import VideoStream, FPS
 from datetime import datetime
 from train_model import run_train
+from ses_kaydi import ses_kaydi_al
+from ses_to_yazi import ses_to_yazi
 
 #Initialize 'currentname' to trigger only when a new person is identified.
 currentname = "Unknown"
@@ -27,6 +30,12 @@ fps = FPS().start()
 sayac = 0	
 mesaj = "Yüz tanıma başladı"
 
+
+f1 = threading.Thread(target=ses_kaydi_al)
+#f2 = threading.Thread(target=ses_to_yazi)
+f1.start()
+#f2.start()
+
 def print_utf8_text(image, xy, text, color):  # utf-8 karakterleri
 	fontName = 'FreeSerif.ttf'  # 'FreeSansBold.ttf' # 'FreeMono.ttf' 'FreeSerifBold.ttf'
 	
@@ -40,6 +49,7 @@ def print_utf8_text(image, xy, text, color):  # utf-8 karakterleri
 	return image
 # loop over frames from the video file stream
 while True:
+
 	# grab the frame from the threaded video stream and resize it
 	# to 500px (to speedup processing)
 	frame = vs.read()

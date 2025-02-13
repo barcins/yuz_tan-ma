@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #! /usr/bin/python
 
 # import the necessary packages
@@ -51,5 +52,5 @@ def run_train():
 	f = open("encodings.pickle", "wb")
 	f.write(pickle.dumps(data))
 	f.close()
-	
+
 run_train()
