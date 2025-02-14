@@ -11,6 +11,8 @@ for i in range(pyaudio.PyAudio().get_device_count()):
     dev = pyaudio.PyAudio().get_device_info_by_index(i)
     print((i,dev['name'],dev['maxInputChannels']))
 
+
+
 p = pyaudio.PyAudio()
 CHUNK = 1024
 FORMAT = pyaudio.paInt16
@@ -53,7 +55,7 @@ def ses_kaydi_al():
         
         frames = []
         for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
-            data = stream.read(CHUNK)
+            data = stream.read(CHUNK, exception_on_overflow=False)
             frames.append(data)
 
         stream.stop_stream()

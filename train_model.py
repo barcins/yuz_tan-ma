@@ -10,9 +10,11 @@ import cv2
 import os
 
 
+
 def run_train():
 	# our images are located in the dataset folder
 	print("[INFO] start processing faces...")
+	#print("paths.list_images(dataset):", os.getcwd())
 	imagePaths = list(paths.list_images("dataset"))
 
 	# initialize the list of known encodings and known names
@@ -46,9 +48,9 @@ def run_train():
 			knownNames.append(name)
 
 	# dump the facial encodings + names to disk
-	print("[INFO] serializing encodings...")
+	print("[INFO] serializing encodings... " + os.getcwd()+"/encodings.pickle")
 	data = {"encodings": knownEncodings, "names": knownNames}
-	f = open("encodings.pickle", "wb")
+	f = open(os.getcwd()+"/encodings.pickle", "wb")
 	f.write(pickle.dumps(data))
 	f.close()
 

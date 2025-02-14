@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# #! /usr/bin/python
+#! /usr/bin/python
 # import the necessary packages
 import face_recognition, imutils, pickle, time, cv2, os, numpy as np, threading
 from PIL import Image, ImageDraw, ImageFont
@@ -11,7 +11,7 @@ from ses_kaydi import ses_kaydi_al
 from ses_to_yazi import ses_to_yazi
 
 
-kimler = os.getcwd() + "dataset/_kimler/"
+kimler = os.getcwd() + "/dataset/_kimler/"
 print("kimler:", kimler)
 
 workdir = "dataset/_kimler/"
@@ -22,11 +22,11 @@ if not os.access(workdir, os.W_OK):
 #Initialize 'currentname' to trigger only when a new person is identified.
 currentname = "Unknown"
 #Determine faces from encodings.pickle file model created from train_model.py
-encodingsP = "encodings.pickle"
+encodingsP = "/encodings.pickle"
 # load the known faces and embeddings along with OpenCV's Haar
 # cascade for face detection
-print("[INFO] loading encodings + face detector...")
-data = pickle.loads(open(encodingsP, "rb").read())
+print("[INFO] loading encodings + face detector... " + os.getcwd() +encodingsP)
+data = pickle.loads(open(os.getcwd() +encodingsP, "rb").read())
 # initialize the video stream and allow the camera sensor to warm up
 # Set the ser to the followng
 # src = 0 : for the build in single web cam, could be your laptop webcam
@@ -39,7 +39,7 @@ vs = VideoStream(src=0,framerate=10).start()
 #vs = VideoStream(usePiCamera=True).start()
 # start the FPS counter
 fps = FPS().start()
-sayac = 0	
+sayac, bos = 0, 0
 mesaj = "Yüz tanıma başladı"
 
 
@@ -72,22 +72,30 @@ while True:
 	encodings = face_recognition.face_encodings(frame, boxes)
 	names = []
 	# loop over the facial embeddings
+	sayac = sayac + 1
+	
+
 	for encoding in encodings:
 		# attempt to match each face in the input image to our known
 		# encodings
 		matches = face_recognition.compare_faces(data["encodings"],
 			encoding)
 		name = "Unknown" #if face is not recognized, then print Unknown
-		sayac = sayac + 1
 		#cv2.putText(frame, mesaj, (5, 30), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (0, 0, 255), 1)
 		frame = print_utf8_text(frame,(5, 30),mesaj, (255,255,255)) # Türkçe karakterler
 		# check to see if we have found a match
+
+		
+			
 		if True in matches:
+			
+
 			# find the indexes of all matched faces then initialize a
 			# dictionary to count the total number of times each face
 			# was matched
 			matchedIdxs = [i for (i, b) in enumerate(matches) if b]
 			counts = {}
+			#print("matchedIdxs", matchedIdxs)
 			# loop over the matched indexes and maintain a count for
 			# each recognized face face
 			for i in matchedIdxs:
@@ -97,10 +105,13 @@ while True:
 			# of votes (note: in the event of an unlikely tie Python
 			# will select first entry in the dictionary)
 			name = max(counts, key=counts.get)
+			print("counts:",counts, "name:", name, "sayac", sayac)
 			#If someone in your dataset is identified, print their name on the screen
 			if currentname != name:
 				currentname = name
-				print(currentname)
+				sayac = 0
+				print(currentname, name, names)
+			
 		# update the list of names
 		names.append(name)
 
@@ -109,12 +120,16 @@ while True:
 
 	if sayac > 20 and len(boxes) == 1 and name == "Unknown":
 		#names = []
-		file_name = "dataset/_kimler/" + datetime.now().strftime('%Y-%m-%d_%H-%M-%S..jpg' ) 
-		print("fotoğraf çekildi:", file_name)
-		mesaj = "Tanımsız Yüz algılandı."
+		file_name = kimler + datetime.now().strftime('%Y-%m-%d_%H-%M-%S.jpg' ) 
+		mesaj = "Tanımsız Yüz algılandı. Foto çekiliyor."
+		frame = print_utf8_text(frame,(5, 30),mesaj, (255,255,255)) # Türkçe karakterler
 		cv2.imwrite(file_name,frame)
+		print("fotoğraf çekildi:", file_name)
+		cv2.waitKey(2000)
+		mesaj = "Fotoğraf haritaları güncelleniyor."
+		frame = print_utf8_text(frame,(5, 30),mesaj, (255,255,255)) # Türkçe karakterler
 		run_train()
-		data = pickle.loads(open(encodingsP, "rb").read())
+		data = pickle.loads(open(os.getcwd()+encodingsP, "rb").read())
 		sayac = 0	
 
 	# loop over the recognized faces
