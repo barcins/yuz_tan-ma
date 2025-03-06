@@ -2,14 +2,14 @@
 import pyaudio, os, threading
 import wave
 from datetime import datetime
-import cv2, time
+import cv2, time, glob
 
 ses_kaydi = os.getcwd() + "/audio/"
 
 print(pyaudio.PyAudio().get_default_input_device_info())
 for i in range(pyaudio.PyAudio().get_device_count()):
     dev = pyaudio.PyAudio().get_device_info_by_index(i)
-    print((i,dev['name'],dev['maxInputChannels']))
+    #print((i,dev['name'],dev['maxInputChannels']))
 
 
 
@@ -19,12 +19,18 @@ FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 44100
 RECORD_SECONDS = 10
+KAYITSAYISI = 4
 
-KAYITTUMA_SN = 120
 
+def ses_dosyalarini_sil():
+    old_path =  os.getcwd()
+    audio_path = os.getcwd() + "/audio/"
+    for file in glob.glob(audio_path+"*.wav"):
+        os.remove(file) # okunmuş eski dosyaları siliyoruz 
 
-def kaydi_kaydet(frames):
-    WAVE_OUTPUT_FILENAME = ses_kaydi + "ses_kaydi" + datetime.now().strftime('%Y-%m-%d_%H-%M-%S.wav' ) 
+def kaydi_kaydet(frames, ses_dosya_sayac):
+    WAVE_OUTPUT_FILENAME = ses_kaydi  + "ses_kaydi_" + str(ses_dosya_sayac) + "_" + datetime.now().strftime('%Y-%m-%d_%H-%M-%S.wav') 
+    WAVE_OUTPUT_FILENAME = ses_kaydi  + "ses_kaydi_" + str(ses_dosya_sayac) + "_.wav" 
     wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
     wf.setnchannels(CHANNELS)
     wf.setsampwidth(p.get_sample_size(FORMAT))
@@ -33,19 +39,15 @@ def kaydi_kaydet(frames):
     wf.close()
 
 def ses_kaydi_al():
-
+    print("[START] * ses recording")
+    #os.chdir("audio") 
+    ses_dosya_sayac = 0
     
-    print("* ses recording")
-    os.chdir("audio") 
+
     while True:
-        silincek_ses_dosyalari = len( os.listdir()) - 20 # ses dosyalarının bulund
-        files = sorted(filter(os.path.isfile, os.listdir('.')), key=os.path.getmtime) # ses dosyaları listele kayıt tarihine göre sırala
-        if silincek_ses_dosyalari > 0:
-            for file in range(silincek_ses_dosyalari ):
-                os.remove(files[file]) # önceki kayıtları sil
-                #print("kontrol # önceki kayıtları sil", files[file])
-
-
+        ses_dosya_sayac += 1
+        if ses_dosya_sayac > KAYITSAYISI:
+            ses_dosya_sayac = 1
         p = pyaudio.PyAudio()
         stream = p.open(format=FORMAT,
                     channels=CHANNELS,
@@ -62,11 +64,8 @@ def ses_kaydi_al():
         stream.close()
         p.terminate()
 
-        start = time.perf_counter()
-        t3 = threading.Thread(target=kaydi_kaydet, args=[frames])
+        t3 = threading.Thread(target=kaydi_kaydet, args=[frames, ses_dosya_sayac])
         t3.start()
-        finish = time.perf_counter()
-        #print(f'Finished in {round(finish-start, 2)} second(s) ')
 
 
 
